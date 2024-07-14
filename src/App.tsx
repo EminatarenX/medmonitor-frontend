@@ -1,25 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { RouterProvider } from "react-router-dom";
+import { appRouter } from "./routes";
+import { ToastContainer } from "react-toastify";
+import { toastStyles } from "./services/alerts/tastify.styles";
+import { Fragment, useEffect } from "react";
+import "react-toastify/ReactToastify.css";
+import { SocketProvider } from "./stores/ws/websocket";
 
 function App() {
+  useEffect(() => {
+    window.process = {
+      ...window.process,
+    };
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Fragment>
+      <SocketProvider>
+      <RouterProvider router={appRouter} />
+      <ToastContainer {...toastStyles} />
+      </SocketProvider>
+    </Fragment>
   );
 }
 
