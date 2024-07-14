@@ -1,5 +1,5 @@
 import socketio, { Socket, Manager } from "socket.io-client";
-// import { SOCKET_URL } from '../../env.d'
+import { SOCKET_URL } from '../../env.d'
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuthState } from "../auth/auth.store";
 
@@ -15,7 +15,7 @@ export let socket: Socket;
 export const getWsConnection = (token: string) => {
   if (token) {
     const manager = new Manager(
-      "http://localhost:4000/socket.io/socket.io.js",
+        SOCKET_URL || "http://localhost:4000/socket.io/socket.io.js",
       {
         extraHeaders: {
           authentication: token!,
