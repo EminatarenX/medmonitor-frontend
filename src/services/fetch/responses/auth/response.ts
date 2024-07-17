@@ -9,6 +9,7 @@ export interface RegisterResponse {
 export interface ProfileResponse {
   user: User;
   access_token: string;
+  id?: string
 }
 
 export interface User {

@@ -16,6 +16,8 @@ interface ChatState {
   getPatientChat: (userId: string) => Promise<void>;
   sendMessage: (chatId: string, to: string, message: string) => Promise<void>;
   setNewMessage: (message: Message) => void;
+  doctorCreateChat: ( patientId: string) => void;
+  
 }
 
 export const chatStore: StateCreator<
@@ -37,12 +39,16 @@ export const chatStore: StateCreator<
       set({ loading: false });
     }
   },
+  doctorCreateChat: async( patientId: string) => {
+
+  },
   getPatientChat: async (patientID: string) => {
     set({ loading: true });
     try {
       const response = await fetchService.get<GetPatientChatResponse>(
         `/chat/patient/${patientID}`
       );
+      if(!response) return;
       const messagesConverted = response.messages.reduce((acc, doctor) => {
         acc[doctor.id] = doctor;
         return acc;

@@ -24,6 +24,7 @@ export const ChatContainer = ({
   const toMessage = user === chat?.doctorId ? chat?.patientId : chat?.doctorId;
   const [content, setContent] = useState<string>("");
   const chatBoxRef = useRef<HTMLDivElement>(null);
+  console.log({from: toMessage, to: user})
 
   const handleSendMessage = async () => {
     if (content.trim() === "") return;
@@ -39,7 +40,7 @@ export const ChatContainer = ({
   }, [messages]);
   return (
     <Fragment>
-      <ChatHeader to={toMessage}  from={user} />
+      <ChatHeader to={toMessage!}  from={user} />
       {!chat ? (
         <section className="flex flex-col justify-center items-center h-96">
           <p className="text-xl text-gray-400 mb-4">No hay mensajes</p>

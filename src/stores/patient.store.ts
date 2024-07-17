@@ -20,7 +20,7 @@ export interface PatientState {
 export const patientSlice: StateCreator<
   PatientState,
   [["zustand/immer", never]]
-> = (set) => ({
+> = (set, get) => ({
   patients: {},
   totalPatients: 0,
   currentPatient: null,
@@ -32,9 +32,11 @@ export const patientSlice: StateCreator<
         ...patient,
         birthDate: new Date(patient.birthDate),
       });
+     
       set((state) => {
         state.patients[response.id!] = response;
       });
+
     } catch (error) {
       throw error;
     }

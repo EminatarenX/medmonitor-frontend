@@ -13,7 +13,7 @@ interface VideoCallState {
   callingUser: boolean;
   callUser: (id: string, senderId: string) => void;
   callerName: string;
-  callAcepted: boolean;
+  callAccepted: boolean;
   connectionRef: React.RefObject<Peer.Instance> | null;
   callerSignal: SignalData | null;
   loading: boolean;
@@ -44,11 +44,11 @@ export const chatStore: StateCreator<
   modalVideoCall: false,
   callEnded: false,
   connectionRef: createRef<Peer.Instance>(),
-  callAcepted: false,
+  callAccepted: false,
   handleSetSocketEvents: () => {
     console.log('handling socket events')
     socket.on("call-user", (data) => {
-      console.log("data recivida: ", data);
+      console.log("alguien te esta llamando: ", data);
       set({ receiveCall: true });
       set({ caller: data.senderId });
       set({ callerSignal: data.signalData });
@@ -64,9 +64,7 @@ export const chatStore: StateCreator<
       .getUserMedia({ video: true, audio: true })
       .then((stream: MediaStream) => {
         set({ stream: stream });
-
         const myVideo = get().myVideo;
-
         if (myVideo?.current) {
           myVideo.current.srcObject = stream;
         }
@@ -80,80 +78,72 @@ export const chatStore: StateCreator<
   },
   callUser: (id: string, senderId: string) => {
     const stream = get().stream;
-    // if (!stream) {
-    //   console.log("No hay stream");
-    //   return;
-    // }
     const peer = new Peer({
       initiator: true,
       trickle: false,
       stream: stream!,
     });
-
+  
     peer.on("signal", (data) => {
       socket.emit("call-user", {
         receiverId: id,
         senderId: senderId,
         signalData: data,
       });
-
+  
       set({ callingUser: true });
     });
-
-    peer.on("stream", (stream) => {
+  
+    peer.on("stream", (remoteStream) => {
       const userVideo = get().userVideo;
       if (userVideo?.current) {
-        userVideo.current.srcObject = stream;
+        userVideo.current.srcObject = remoteStream;
       }
     });
-
+  
     socket.on("accept-call", (signal) => {
-      console.log(signal)
-      set({ callAcepted: true });
+      set({ callAccepted: true });
       peer.signal(signal);
     });
+  
     const connectionRef = get().connectionRef;
     if (connectionRef) {
       (connectionRef as React.MutableRefObject<Peer.Instance>).current = peer;
-      console.log(connectionRef.current);
     }
   },
-  answerCall: (id: string) => {
-    console.log("answering to: " + id);
-    set({ callAcepted: true });
   
+  answerCall: (id: string) => {
+    set({ callAccepted: true });
     const stream = get().stream;
-    console.log(stream);
-    if (!stream) {
-      console.log("No hay stream");
-      return;
-    }
+  
     const peer = new Peer({
       initiator: false,
       trickle: false,
-      stream: stream,
+      stream: stream!,
     });
-
+  
     peer.on("signal", (data) => {
       socket.emit("accept-call", { signalData: data, receiverId: id });
     });
-    const userVideo = get().userVideo;
-
-    peer.on("stream", (stream) => {
+  
+    peer.on("stream", (remoteStream) => {
+      const userVideo = get().userVideo;
       if (userVideo?.current) {
-        userVideo.current.srcObject = stream;
+        userVideo.current.srcObject = remoteStream;
       }
     });
-
-    set({receiveCall: false})
-    set({modalVideoCall: true})
-
+  
+    set({ receiveCall: false });
+    set({ modalVideoCall: true });
+  
     peer.signal(get().callerSignal!);
+  
     const connectionRef = get().connectionRef;
     if (connectionRef) {
       (connectionRef as React.MutableRefObject<Peer.Instance>).current = peer;
     }
   },
+  
 
   leaveCall: () => {
     set({ callEnded: true });
@@ -171,7 +161,7 @@ export const chatStore: StateCreator<
   handleSetOffVideoCall: () => {
     set({ callingUser: false });
     set({ receiveCall: false });
-    set({ callAcepted: false });
+    set({ callAccepted: false });
     set({ caller: "" });
     set({ callerSignal: null });
     set({ callerName: "" });

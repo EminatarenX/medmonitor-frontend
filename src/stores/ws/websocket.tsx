@@ -14,6 +14,7 @@ export let socket: Socket;
 
 export const getWsConnection = (token: string) => {
   if (token) {
+    console.log(SOCKET_URL)
     const manager = new Manager(
         SOCKET_URL || "http://localhost:4000/socket.io/socket.io.js",
       {

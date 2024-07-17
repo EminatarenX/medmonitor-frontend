@@ -1,22 +1,35 @@
 import { VideocamRounded } from "@mui/icons-material";
 import { useVideoCallState } from "../../../stores/chat/videocall.store";
+import { useLocation, useNavigate } from "react-router-dom";
 interface Props {
-  to: string | undefined;
+  to: string;
   from: string;
 }
 
 export const ChatHeader = ({ to, from }: Props) => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const callUser = useVideoCallState((state) => state.callUser);
   const handleSetMyVideo = useVideoCallState((state) => state.handleSetMyVideo);
   const setModalVideoCall = useVideoCallState(
     (state) => state.setModalVideoCall
   );
 
+  // const handleCallUser = () => {
+  //   setModalVideoCall(true);
+  //   callUser(to!, from);
+  //   handleSetMyVideo();
+  // };
+  console.log({from, to})
+
   const handleCallUser = () => {
-    setModalVideoCall(true);
-    callUser(to!, from);
-    handleSetMyVideo();
-  };
+    
+    if(location.pathname === `/patient/chat`){
+      navigate(`/patient/chat/call/${to}`)
+    }else {
+      navigate(`/doctor/patients/call/${to}`)
+    }
+  }
   return (
     <>
       <header className="mb-6 flex justify-between">

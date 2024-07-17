@@ -12,6 +12,7 @@ interface AuthState {
     user?: User | Patient | Doctor;
     doctor?: Doctor;
     patient?: Patient;
+    id?: string;
 
     loginHospital: (email: string, password: string) => Promise<void>;
     loginDoctor: (email: string, password: string) => Promise<void>;
@@ -29,6 +30,7 @@ export const authStore: StateCreator<AuthState> = (set) => ({
     user: undefined,
     doctor: undefined,
     patient: undefined,
+    id: undefined,
 
     loginHospital: async (email: string, password: string) => {
         try {
@@ -41,8 +43,8 @@ export const authStore: StateCreator<AuthState> = (set) => ({
     },
     checkAuthStatus: async () => {
         try {
-          const {access_token, user} = await fetchService.get<ProfileResponse>('/auth/profile');
-            set( { status: 'authorized', token: access_token, user } );
+          const {access_token, user, id} = await fetchService.get<ProfileResponse>('/auth/profile');
+            set( { status: 'authorized', token: access_token, user, id } );
         } catch ( error ) {
           set( { status: 'unauthorized', token: undefined, user: undefined } );
             throw 'unauthorized';

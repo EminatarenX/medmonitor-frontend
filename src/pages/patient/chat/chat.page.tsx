@@ -47,6 +47,7 @@ export const PatientChatPage = () => {
     })
 
     const handleInitializeChat = async () => {
+        console.log(patient?.doctorId)
         await createChat(patient?.doctorId!)
     }
 

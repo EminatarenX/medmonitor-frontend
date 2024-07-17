@@ -12,6 +12,7 @@ import { VideoComponent } from "../../../../components/shared/app/video.componen
 import { FlexRowSection } from "../../../../components/shared/container/flex-row.component";
 import { useVideoCallState } from "../../../../stores/chat/videocall.store";
 import { ModalVideoCall } from "../../../../components/shared/app/modal-video-call.component";
+import { useChatState } from "../../../../stores/chat/chat.store";
 
 export const DoctorPatientPage = () => {
   const {
@@ -40,11 +41,15 @@ export const DoctorPatientPage = () => {
   const handleSetMyVideo = useVideoCallState((state) => state.handleSetMyVideo);
   const callingUser = useVideoCallState((state) => state.callingUser);
   const receiveCall = useVideoCallState((state) => state.receiveCall);
-
+  const createChat = useChatState( state => state.createChat)
   const leaveCall = () => {
     setCallEnded(true);
     connectionRef.current?.destroy(); // Usa el operador de encadenamiento opcional para evitar errores
   };
+  const handleInitializeChat = async () => {
+    console.log('creating')
+    // await createChat(patientId!);
+  }
   useEffect(() => {
     const getData = async () => {
       await getPatientInformation(patientId!);
@@ -91,6 +96,7 @@ export const DoctorPatientPage = () => {
           </article>
           <DarkCardContainer width="w-2/3">
             <ChatContainer
+              create={handleInitializeChat}
               sendMessage={sendMessage}
               chat={chat}
               user={doctor?.id!}

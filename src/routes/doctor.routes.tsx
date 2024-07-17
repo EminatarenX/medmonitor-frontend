@@ -4,6 +4,7 @@ import { DoctorLayout } from "../shared/layouts";
 import { DoctorMonitorPage } from "../pages/doctor/monitor/monitor.page";
 import { DoctorSettingsPage } from "../pages/doctor/settings/settings.page";
 import { DoctorPatientPage } from "../pages/doctor/patients/[id]/patient.page";
+import VideoCallPage from "../pages/shared/videocall.page";
 
 export const doctorRouter = [{
     path: '/doctor',
@@ -29,6 +30,10 @@ export const doctorRouter = [{
         {
             path: 'patients/:id',
             element: <DoctorPatientPage />
+        },
+        {
+            path: 'patients/call/:id',
+            element: <VideoCallPage />
         }
     ]
 }]
