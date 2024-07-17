@@ -26,7 +26,7 @@ export const PatientChatPage = () => {
     const sendMessage = useChatState(state => state.sendMessage)
     const setNewMessage = useChatState(state => state.setNewMessage)
     const leaveCall = useVideoCallState(state => state.leaveCall)
-
+    
     useEffect(() => {
         const getData = async () => {
             await getDoctorInformation(patient?.doctorId!)
