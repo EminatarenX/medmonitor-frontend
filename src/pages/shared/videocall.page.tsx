@@ -39,6 +39,8 @@ const VideoCallPage = () => {
         if (myVideo.current) {
           myVideo.current.srcObject = stream;
         }
+      }).catch(error => {
+        console.log(error)
       });
 
     socket.on("me", (id) => {
