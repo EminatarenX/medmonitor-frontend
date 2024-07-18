@@ -125,9 +125,19 @@ const VideoCallPage = () => {
       )}
       <h1 className="text-3xl font-bold text-center mb-8">Zoomish</h1>
       <div className="max-w-4xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1  gap-4 mb-8">
           <div className="bg-neutral-800 rounded-lg overflow-hidden">
-            {stream && (
+          {callAccepted && !callEnded && (
+              <video
+                playsInline
+                ref={userVideo}
+                autoPlay
+                className="w-full h-full object-cover"
+              />
+            )}
+          </div>
+          <div className="bg-neutral-800 rounded-lg overflow-hidden ">
+          {stream && (
               <video
                 playsInline
                 muted
@@ -136,16 +146,7 @@ const VideoCallPage = () => {
                 className="w-full h-full object-cover"
               />
             )}
-          </div>
-          <div className="bg-neutral-800 rounded-lg overflow-hidden">
-            {callAccepted && !callEnded && (
-              <video
-                playsInline
-                ref={userVideo}
-                autoPlay
-                className="w-full h-full object-cover"
-              />
-            )}
+          
           </div>
         </div>
         <div className="bg-neutral-800 rounded-lg p-6 mb-8">
