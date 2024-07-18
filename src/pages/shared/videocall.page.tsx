@@ -33,7 +33,7 @@ const VideoCallPage = () => {
 
   useEffect(() => {
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: false })
+      .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         setStream(stream);
         if (myVideo.current) {
