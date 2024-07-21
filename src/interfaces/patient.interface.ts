@@ -1,3 +1,5 @@
+import { Doctor } from "./doctor.interface";
+
 export interface Patient {
     id?: string;
     name: string;
@@ -13,4 +15,5 @@ export interface Patient {
     doctorId?: string;
     hospitalId?: string;
     createdAt?: Date;
+    doctor? : Doctor;
   }

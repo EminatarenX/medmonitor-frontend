@@ -93,6 +93,7 @@ useEffect(() => {
           shape="rounded"
           onChange={(_, value) => setpage(value)}
           sx={{
+            marginTop: '2rem',
             '& .MuiPaginationItem-root': {
               color: '#d1d5db',
               '&:hover': {

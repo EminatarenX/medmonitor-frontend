@@ -13,6 +13,7 @@ interface ChatState {
   messages: Record<string, Message>;
   loading: boolean;
   createChat: (doctorId: string) => Promise<void>;
+  createChatDoctor: (patientId: string) => Promise<void>;
   getPatientChat: (userId: string) => Promise<void>;
   sendMessage: (chatId: string, to: string, message: string) => Promise<void>;
   setNewMessage: (message: Message) => void;
@@ -27,6 +28,18 @@ export const chatStore: StateCreator<
   chat: undefined,
   messages: {},
   loading: false,
+  createChatDoctor: async ( patientId: string) => {
+    set({ loading: true });
+    try {
+      const chat = await fetchService.post<Chat>("/chat/create", { patientId });
+      set({ chat });
+    } catch (error) {
+      console.log(error);
+      throw error;
+    } finally {
+      set({ loading: false });
+    }
+  },
   createChat: async (doctorId: string) => {
     set({ loading: true });
     try {

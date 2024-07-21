@@ -7,14 +7,29 @@ interface Props {
   id: string;
   color?: string;
   register: UseFormRegisterReturn;
+  disable?: boolean
+  defaultValue?: string
 }
 
-export const TextField = ({ type, placeholder, id, register, color }: Props): React.JSX.Element => {
-  let inputElement = null;
+export const TextField = ({ type, placeholder, id, register, color, disable = false, defaultValue }: Props): React.JSX.Element | null => {
+  let inputElement: React.JSX.Element | null = null;
 
   switch (type) {
     case "date":
+      break;
     case "text":
+      inputElement = (
+        <input
+        disabled={disable}
+        id={id}
+        type={type}
+        value={defaultValue}
+        placeholder={placeholder}
+        className={`bg-transparent  text-${color} outline-none text-sm  w-full placeholder:text-neutral-400 text-semibold border-b-2 border-neutral-700 p-3`}
+        {...register}
+        />
+      );
+      break;
     case "datetime-local":
       inputElement = (
         <div>

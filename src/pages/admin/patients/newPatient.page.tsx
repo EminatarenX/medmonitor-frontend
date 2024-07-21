@@ -1,7 +1,10 @@
 import { NewPatientForm } from "../../../components/admin/patients/newpatientform.component"
+import { useDoctorState } from "../../../stores/auth/admin/doctor.store";
 
 
 export const NewPatientPage = () => {
+  const getDoctors = useDoctorState( state => state.getDoctors);
+  const doctors = useDoctorState( state => state.doctors);
 
   return (
     <>
@@ -18,7 +21,7 @@ export const NewPatientPage = () => {
       
     </header>
       <div className="">
-        <NewPatientForm/>
+        <NewPatientForm getDoctors={getDoctors} doctors={doctors}/>
       </div>
       </>
   )

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NewAppointmentForm } from "../../../components/doctor/appointments/newappointment-form";
+import {  NewMonitorForm } from "../../../components/doctor/appointments/newappointment-form";
 import { PatientInList } from "../../../components/doctor/patients/patientinlist.component";
 import MonitoredPatientCard from "../../../components/shared/app/monitored-patient-card.component";
 import { DarkCardContainer } from "../../../components/shared/container/dark-card.component";
@@ -7,44 +7,29 @@ import { FlexRowSection } from "../../../components/shared/container/flex-row.co
 import { GridContainer } from "../../../components/shared/container/grid-container.component";
 import { ArticleTitle } from "../../../components/shared/text/articletitle.component";
 import { Title } from "../../../components/shared/text/title.component";
+import { usePatientState } from "../../../stores/patient.store";
+import { useMonitorState } from "../../../stores/monitor/monitor.store";
+
 
 export const DoctorMonitorPage = () => {
-  const timelabelsarray = () => {
-    let labels = [];
-    for (let i = 0; i < 10; i++) {
-      labels.push(i.toString());
-    }
-    return labels;
-  }
- const [patient, setPatient] = useState({
-    id: 1,
-    name: "Paciente 1",
-    heartRate: 80,
-    oxygenSaturation: 90,
-    timeLabels: [...timelabelsarray() ],
-    heartRateData: [5, 5, 7, 8, 9, 10, 11, 12, 13, 14],
-    oxygenData: [6, 5, 8, 9, 11, 12, 13, 14, 15, 16],
-  });
+  const patients = usePatientState(state => state.patients)
+  const getPatients = usePatientState(state => state.getPatientsForDoctor)
+  const monitors = useMonitorState( state => state.monitors)
+  const getMonitors = useMonitorState( state => state.getMonitors)
+  const loading = useMonitorState( state => state.loading)
+  
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setPatient((prevPatient) => {
-        const newHeartRateData = [...prevPatient.heartRateData.slice(1), Math.floor(Math.random() * 5)];
-        const newOxygenData = [...prevPatient.oxygenData.slice(1), Math.floor(Math.random() * 7)];
-        const newTimeLabels = prevPatient.timeLabels.length >= 10 
-          ? [...prevPatient.timeLabels.slice(1), (parseInt(prevPatient.timeLabels[prevPatient.timeLabels.length - 1]) + 1).toString()]
-          : [...prevPatient.timeLabels, (prevPatient.timeLabels.length + 1).toString()];
+    const interval = setInterval(async () => {
+      await getMonitors();
+    }, 3000);
 
-        return {
-          ...prevPatient,
-          heartRate: Math.floor(Math.random() * 100),
-          oxygenSaturation: Math.floor(Math.random() * 100),
-          heartRateData: newHeartRateData,
-          oxygenData: newOxygenData,
-          timeLabels: newTimeLabels,
-        };
-      });
-    }, 1500);
+    const init = async () => {
+      await getPatients();
+      await getMonitors();
+    }
+    init();
+
     return () => clearInterval(interval);
   }, []);
   
@@ -59,7 +44,7 @@ export const DoctorMonitorPage = () => {
           <ArticleTitle color="white" value="Configura un nuevo monitor" />
         </FlexRowSection>
         <FlexRowSection>
-          <NewAppointmentForm />
+          <NewMonitorForm patients={patients}/>
         </FlexRowSection>
       </DarkCardContainer>
 
@@ -72,22 +57,17 @@ export const DoctorMonitorPage = () => {
         {/* <FlexColList> */}
         <GridContainer>
 
-          <MonitoredPatientCard patient={patient}/>
-          <MonitoredPatientCard patient={patient}/>
-          <MonitoredPatientCard patient={patient}/>
+          {
+            loading ? (
+              <div className="text-center p-3">Cargando...</div>
+            ) :  Object.values(monitors).map((monitor) => (
+              <MonitoredPatientCard monitor={monitor} key={monitor.id}/>
+              ))
+            
+          }
         </GridContainer>
         {/* </FlexColList> */}
       </DarkCardContainer>
     </section>
   );
 };
-
-const patient = {
-  id: 1,
-  name: "Paciente 1",
-  heartRate: 80,
-  oxygenSaturation: 90,
-  timeLabels: ["1", "2", "3", "4", "5"],
-  heartRateData: [5, 5, 7, 8, 9],
-  oxygenData: [6, 5, 8, 9, 11],
-}

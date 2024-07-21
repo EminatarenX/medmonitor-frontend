@@ -2,49 +2,56 @@ import { TextField } from "../../shared/fields/textfield";
 import { DarkCardContainer } from "../../shared/container/dark-card.component";
 import { useForm } from "react-hook-form";
 import { SelectInput } from "../../shared/fields/selectinput";
+import { Patient } from "../../../interfaces/patient.interface";
+import { useMonitorState } from "../../../stores/monitor/monitor.store";
+import { Alerts } from "../../../services/alerts/toastify";
+import { AxiosError } from "axios";
 
-interface Appointment {
-    patient: string;
-    date: string;
-    time: string;
-    symptoms: string;
+interface Props {
+  patients: Record<string, Patient>;
 }
 
-
-export const NewAppointmentForm = () => {
-  const { register } = useForm<Appointment>();
+export const NewMonitorForm = ({ patients }: Props) => {
+  const createMonitor = useMonitorState( state => state.addMonitor);
+  const { register, handleSubmit } = useForm<{patientId: string, channel: string}>();
+  const onSubmitMonitor = async (data: { patientId: string, channel: string}) => {
+    try {
+      await createMonitor(data.patientId, data.channel);
+      Alerts.toastify('Monitor creado', 'success');
+    } catch (e) {
+      const error = e as AxiosError<any>;
+      console.log(error)
+      Alerts.toastify(error.response?.data.message, 'error');
+    }
+  }
   return (
-    <form className="flex w-full flex-col lg:flex-row">
+    <form onSubmit={handleSubmit(onSubmitMonitor)} className="flex w-full flex-col lg:flex-row">
       <DarkCardContainer width="w-1/2">
         <SelectInput
-            register={register("patient", { required: true })}
-            color="white"
+          register={register("patientId", { required: true })}
+          color="white"
         >
-            <option className="text-black" value="">Selecciona un paciente</option>
-            <option className="text-black" value="1">Paciente 1</option>
-            <option className="text-black" value="2">Paciente 2</option>
-            <option className="text-black" value="3">Paciente 3</option>
+          <option value="" className="text-gray-900">
+            Selecciona un paciente
+          </option>
+          {Object.values(patients).map((patient) => (
+            <option className="text-gray-900 "  key={patient.id} value={patient.id}>
+              {patient.name + " " + patient.lastName} 
+            </option>
+          ))}
         </SelectInput>
-        <textarea placeholder="Sintomas " className="bg-transparent  text-white outline-none text-sm  w-full placeholder:text-neutral-300 text-semibold border-b-2 border-neutral-700 p-3"
-            rows={1}
-            {...register("symptoms", { required: true })}
-        />
-
+        <TextField placeholder="Canal de entrada de datos" type="text" id="channel" color="white" register={register('channel')}/>
+       
       </DarkCardContainer>
 
       <DarkCardContainer width="w-1/2">
-        <TextField
-          type="datetime-local"
-          placeholder="Fecha"
-          color="white"
-          id="edad"
-          register={register("date", { required: true })}
+       
+        <input
+          type="submit"
+          value="Guardar"
+          className="p-2 bg-sky-600 text-white font-bold text-lg"
         />
-
-
-        <input type="submit" value="Guardar" className="p-2 bg-sky-600 text-white font-bold text-lg"/>
       </DarkCardContainer>
-      
     </form>
   );
 };

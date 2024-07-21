@@ -42,10 +42,33 @@ export interface Doctor {
     createdAt:  Date;
 }
 
-export interface GetPatientsByDoctorResponse {
+export interface GetPatientsResponse {
     total:    number;
     patients: Patient[];
 }
+
+export interface GetPatientByHospitalResponse {
+    total:    number;
+    patients: Patient[];
+}
+
+export interface Patient {
+    id:         string;
+    name:       string;
+    lastName:   string;
+    email:      string;
+    birthDate:  Date;
+    phone:      string;
+    role:       string;
+    address:    string;
+    gender:     string;
+    hospitalId: string;
+    doctorId:   string;
+    active:     boolean;
+    createdAt:  Date;
+    doctor:     Doctor;
+}
+
 
 export interface Patient {
     id:         string;
@@ -62,3 +85,4 @@ export interface Patient {
     doctorId:   string;
     createdAt:  Date;
 }
+

@@ -4,15 +4,21 @@ import { ChatContainer } from "../../../../components/shared/container/chat-cont
 import { DarkCardContainer } from "../../../../components/shared/container/dark-card.component";
 import { ArticleTitle } from "../../../../components/shared/text/articletitle.component";
 import { Title } from "../../../../components/shared/text/title.component";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { usePatientChatPage } from "../../../../hooks/doctor/usepatient.chat.page";
 import { socket } from "../../../../stores/ws/websocket";
 import Peer, { SignalData } from "simple-peer";
-import { VideoComponent } from "../../../../components/shared/app/video.component";
-import { FlexRowSection } from "../../../../components/shared/container/flex-row.component";
+import AddIcon from "@mui/icons-material/Add";
+import { ClinicalRegistryComponent } from "../../../../components/shared/app/clinicalregistry";
+
 import { useVideoCallState } from "../../../../stores/chat/videocall.store";
 import { ModalVideoCall } from "../../../../components/shared/app/modal-video-call.component";
 import { useChatState } from "../../../../stores/chat/chat.store";
+import { Alerts } from "../../../../services/alerts/toastify";
+import { useMonitorState } from "../../../../stores/monitor/monitor.store";
+import { SubTitle } from "../../../../components/shared/text/subtitle.component";
+import { useClinicalRegistryState } from "../../../../stores/medical-registry/clinical-registr.store";
+
 
 export const DoctorPatientPage = () => {
   const {
@@ -27,37 +33,44 @@ export const DoctorPatientPage = () => {
     setNewMessage,
   } = usePatientChatPage();
   const { id: patientId } = useParams();
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  const [receivingCall, setReceivingCall] = useState(false);
-  const [callerSignal, setCallerSignal] = useState<SignalData | null>(null);
-  const [callAccepted, setCallAccepted] = useState(false);
   const [callEnded, setCallEnded] = useState(false);
-  const [caller, setCaller] = useState("");
-
-  // const myVideo = useRef<HTMLVideoElement>(null);
-  const myVideo = useVideoCallState((state) => state.myVideo);
-  const userVideo = useRef<HTMLVideoElement>(null);
   const connectionRef = useRef<Peer.Instance | null>(null);
   const handleSetMyVideo = useVideoCallState((state) => state.handleSetMyVideo);
   const callingUser = useVideoCallState((state) => state.callingUser);
   const receiveCall = useVideoCallState((state) => state.receiveCall);
-  const createChat = useChatState( state => state.createChat)
+  const createChat = useChatState((state) => state.createChatDoctor);
+  const getMonitor = useMonitorState((state) => state.findMonitor);
+  const monitor = useMonitorState((state) => state.currentMonitor);
+  const clinicalRegistries = useClinicalRegistryState(
+    (state) => state.registries
+  );
+  const getClinicalRegistries = useClinicalRegistryState(
+    (state) => state.findAllPatientRegistries
+  );
   const leaveCall = () => {
     setCallEnded(true);
     connectionRef.current?.destroy(); // Usa el operador de encadenamiento opcional para evitar errores
   };
   const handleInitializeChat = async () => {
-    console.log('creating')
-    // await createChat(patientId!);
-  }
+    try {
+      await createChat(patientId!);
+    } catch (error) {
+      Alerts.toastify("Hubo un error, intenta mas tarde", "error");
+    }
+  };
   useEffect(() => {
+    const interval = setInterval(async () => {
+      await getMonitor(patientId!);
+    }, 3000);
     const getData = async () => {
       await getPatientInformation(patientId!);
       await getPatientChat(patientId!);
+      await getMonitor(patientId!);
+      await getClinicalRegistries(patientId!);
     };
 
     getData();
-    // handleSetMyVideo()
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -81,18 +94,15 @@ export const DoctorPatientPage = () => {
                 Monitor
               </h1>
             </header>
-
-            <MonitoredPatientCard
-              patient={{
-                id: patientId!,
-                name: "" || "",
-                heartRate: 80,
-                oxygenSaturation: 98,
-                timeLabels: ["Mayo", "Junio", "Julio", "Agosto", "Septiembre"],
-                heartRateData: [7, 4, 8, 23, 22],
-                oxygenData: [5, 10, 15, 20, 25],
-              }}
-            />
+            {!monitor ? (
+              <div className="flex items-center justify-center pt-10">
+                <p className="font-bold text-neutral-600">
+                  Aun no hay datos por cargar
+                </p>
+              </div>
+            ) : (
+              <MonitoredPatientCard monitor={monitor} key={monitor.id} />
+            )}
           </article>
           <DarkCardContainer width="w-2/3">
             <ChatContainer
@@ -107,6 +117,33 @@ export const DoctorPatientPage = () => {
         </section>
       </DarkCardContainer>
       <ModalVideoCall leaveCall={leaveCall} />
+
+      <DarkCardContainer width="full">
+        <header className="flex justify-between items-center">
+          <SubTitle value="Historial Clinico" color="white" />
+          <Link
+            to={`/doctor/patients/history/new/${patientId}`}
+            className="flex justify-between items-center gap-5 bg-sky-600  pl-5 rounded-lg "
+          >
+            <span className="text-white font-bold"> Agregar registro</span>
+            <span className="border-l-2 border-sky-500 p-2 text-white">
+              {" "}
+              <AddIcon sx={{ width: 30, height: 30 }} />
+            </span>
+          </Link>
+        </header>
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {!clinicalRegistries ? (
+            <div className="flex justify-center">
+              <span className="text-white">No hay registros por mostrar</span>
+            </div>
+          ) : (
+            Object.values(clinicalRegistries).map((registry) => (
+              <ClinicalRegistryComponent clinicalRegistry={registry} />
+            ))
+          )}
+        </section>
+      </DarkCardContainer>
     </section>
   );
 };

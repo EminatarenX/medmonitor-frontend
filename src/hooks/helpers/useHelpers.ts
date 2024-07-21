@@ -74,11 +74,29 @@ export const useHelpers = () => {
         const time = hourReturned.split(":")[2].split(" ")[1]
         return `${dateReturned} a las ${hour}:${minutes} ${time}`;
       }
+
+      const formatDayMonthYear = (dateStr: string) => {
+        const date = new Date(dateStr);
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      };
+      
+      const formatTime = (dateStr: string) => {
+        const date = new Date(dateStr);
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const seconds = date.getSeconds();
+        return `${hours}:${minutes}:${seconds}`;
+      };
     
     return {
         formatDate,
         especialidades,
         areas,
-        formatPhoneNumber   
+        formatPhoneNumber   ,
+        formatDayMonthYear,
+        formatTime
     }
 }

@@ -71,11 +71,19 @@ export const DobleLineChart = ({
       width={width}
       height={height}
       slotProps={{
+        axisTickLabel: {
+    
+            fontSize: 6,
+            fill: whiteColor,
+
+        
+        },
         legend: {
           labelStyle: {
-            fontSize: 14,
+            fontSize: 12,
             fill: whiteColor,
           },
+          
         },
       }}
     />

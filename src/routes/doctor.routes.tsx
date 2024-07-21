@@ -5,6 +5,7 @@ import { DoctorMonitorPage } from "../pages/doctor/monitor/monitor.page";
 import { DoctorSettingsPage } from "../pages/doctor/settings/settings.page";
 import { DoctorPatientPage } from "../pages/doctor/patients/[id]/patient.page";
 import VideoCallPage from "../pages/shared/videocall.page";
+import NewHistorialClinicoPage from "../pages/doctor/hisotorial-clinico/newhostorial.page";
 
 export const doctorRouter = [{
     path: '/doctor',
@@ -34,6 +35,10 @@ export const doctorRouter = [{
         {
             path: 'patients/call/:id',
             element: <VideoCallPage />
+        },
+        {
+            path: 'patients/history/new/:id',
+            element: <NewHistorialClinicoPage />
         }
     ]
 }]

@@ -1,29 +1,34 @@
 import { Link } from "react-router-dom";
 import { AccountIcon } from "../../../shared/icons/account.icon";
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import OpenInNewOutlinedIcon from '@mui/icons-material/OpenInNewOutlined';
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
+import { Patient } from "../../../interfaces/patient.interface";
+import { useHelpers } from "../../../hooks/helpers/useHelpers";
+
 
 interface Props {
-  id: string | number;
-  name: string;
-  doctor: string;
-  gender: string;
-  phone: string;
-  email: string;
-  date: string;
-  area: string;
+  patient: Patient;
 }
 
-export const PatientInTable = ({
-  id,
-  name,
-  area,
-  doctor,
-  phone,
-  email,
-  date,
-  gender,
-}: Props) => {
+export const PatientInTable = ({ patient }: Props) => {
+  const {
+    id,
+    name,
+    lastName,
+    email,
+    phone,
+    birthDate,
+    password,
+    doctor,
+    role,
+    gender,
+    active,
+    address,
+    doctorId,
+    hospitalId,
+    createdAt,
+  } = patient;
+  const { formatDate} = useHelpers();
   return (
     <tr className="border-b border-neutral-700 hover:bg-neutral-800 transition-all duration-200">
       <td className="p-4 flex items-center gap-3">
@@ -32,24 +37,22 @@ export const PatientInTable = ({
         </div>
         <span className="text-neutral-100 font-medium">{name}</span>
       </td>
-      <td className="p-4 text-neutral-300">{area}</td>
-      <td className="p-4 text-neutral-300">{doctor}</td>
+      <td className="p-4 text-neutral-300">{lastName}</td>
+      <td className="p-4 text-neutral-300">{`${doctor?.name} ${doctor?.lastName}`}</td>
       <td className="p-4 text-neutral-300">{phone}</td>
       <td className="p-4 text-neutral-300">{email}</td>
-      <td className="p-4 text-neutral-300">{date}</td>
+      <td className="p-4 text-neutral-300">{formatDate(createdAt?.toString()!)}</td>
       <td className="p-4">
         <div className="flex items-center gap-3">
-          <Link 
+          <Link
             to={`/admin/patients/${id}`}
             className="p-2 bg-neutral-700 rounded-full hover:bg-neutral-600 transition-colors duration-200"
           >
             <OpenInNewOutlinedIcon className="w-4 h-4 text-neutral-300" />
           </Link>
-          <button 
-            className="p-2 bg-neutral-700 rounded-full hover:bg-red-600 transition-colors duration-200"
-          >
+          {/* <button className="p-2 bg-neutral-700 rounded-full hover:bg-red-600 transition-colors duration-200">
             <DeleteOutlineOutlinedIcon className="w-4 h-4 text-neutral-300" />
-          </button>
+          </button> */}
         </div>
       </td>
     </tr>

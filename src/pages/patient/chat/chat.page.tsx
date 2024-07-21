@@ -11,6 +11,7 @@ import { useChatState } from '../../../stores/chat/chat.store'
 import { socket } from '../../../stores/ws/websocket'
 import { ModalVideoCall } from '../../../components/shared/app/modal-video-call.component'
 import { useVideoCallState } from '../../../stores/chat/videocall.store'
+import { useMonitorState } from '../../../stores/monitor/monitor.store'
 
 
 export const PatientChatPage = () => {
@@ -26,15 +27,27 @@ export const PatientChatPage = () => {
     const sendMessage = useChatState(state => state.sendMessage)
     const setNewMessage = useChatState(state => state.setNewMessage)
     const leaveCall = useVideoCallState(state => state.leaveCall)
+    const getMonitor = useMonitorState( state => state.findMonitor)
+    const monitor = useMonitorState( state => state.currentMonitor)
     
     useEffect(() => {
+
+        const interval = setInterval(async () => {
+            await getMonitor(patient?.id!)
+        }, 2000)
+        
         const getData = async () => {
             await getDoctorInformation(patient?.doctorId!)
             await getPatientChat(patient?.id!)
+            await getMonitor(patient?.id!)
         }
 
         
         getData()
+
+        return () => {
+            clearInterval(interval)
+        }
     },[])
 
     
@@ -66,16 +79,17 @@ export const PatientChatPage = () => {
                         <h1 className='text-2xl font-semibold text-neutral-500'>Monitor</h1>
                     </header>
 
-                       <MonitoredPatientCard patient={{
-                            id: patient?.id!,
-                            name: patientName() || '',
-                            heartRate: 80,
-                            oxygenSaturation: 98,
-                            timeLabels: ['Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre'],
-                            heartRateData: [7, 4, 8, 23, 22],
-                            oxygenData: [5, 10, 15, 20, 25]
-                        }} />
-                  
+                    {
+                        !monitor ? (
+                            <div className='flex items-center justify-center pt-10'>
+                                <p className='font-bold text-neutral-600'>Aun no hay datos por cargar</p>
+                            </div>
+                        ) : (
+                            <MonitoredPatientCard monitor={monitor} key={monitor.id} />
+
+                        )
+                    }
+
                 </article>
                 <DarkCardContainer width='w-2/3'>
                     <ChatContainer user={patient?.id!} sendMessage={sendMessage} create={handleInitializeChat}  chat={chat} messages={messages} loading={loading}/>
