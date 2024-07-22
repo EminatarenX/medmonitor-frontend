@@ -2,10 +2,12 @@
 import { LaunchRounded as LaunchRoundedIcon } from "@mui/icons-material";
 import { Patient } from "../../../interfaces/patient.interface";
 import { useNavigate } from "react-router-dom";
+import { useHelpers } from "../../../hooks/helpers/useHelpers";
 interface Props {
   patient: Patient
 }
 export const PatientInList = ({ patient }: Props) => {
+  const { formatDayMonthYear } = useHelpers()
   const navigate = useNavigate();
   return (
     <div className="flex items-center justify-between w-full p-3 bg-gray-800 rounded-lg shadow-md transition-all duration-300 hover:bg-gray-700">
@@ -15,7 +17,7 @@ export const PatientInList = ({ patient }: Props) => {
         </div>
         <div className="flex flex-col">
           <span className="text-white font-semibold">{patient.name} {patient.lastName}</span>
-          <span className="text-gray-400 text-sm">Hace 2 horas</span>
+          <span className="text-gray-400 text-sm">{formatDayMonthYear(patient.createdAt?.toString()!)}</span>
         </div>
       </div>
       <button

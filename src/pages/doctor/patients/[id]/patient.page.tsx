@@ -18,6 +18,8 @@ import { Alerts } from "../../../../services/alerts/toastify";
 import { useMonitorState } from "../../../../stores/monitor/monitor.store";
 import { SubTitle } from "../../../../components/shared/text/subtitle.component";
 import { useClinicalRegistryState } from "../../../../stores/medical-registry/clinical-registr.store";
+import AnomalyProbabilityCard from "../../../../components/shared/app/anomally-cardpatient.component";
+import { useStatisticsState } from "../../../../stores/stadistics/stadistics.store";
 
 
 export const DoctorPatientPage = () => {
@@ -33,6 +35,8 @@ export const DoctorPatientPage = () => {
     setNewMessage,
   } = usePatientChatPage();
   const { id: patientId } = useParams();
+  const anomalyProbability = useStatisticsState( state => state.anomalyProbabilityPatient)
+  const getAnomalyProbability = useStatisticsState( state => state.getAnomalyProbabilityPatient)
   const [callEnded, setCallEnded] = useState(false);
   const connectionRef = useRef<Peer.Instance | null>(null);
   const handleSetMyVideo = useVideoCallState((state) => state.handleSetMyVideo);
@@ -67,6 +71,7 @@ export const DoctorPatientPage = () => {
       await getPatientChat(patientId!);
       await getMonitor(patientId!);
       await getClinicalRegistries(patientId!);
+      await getAnomalyProbability(patientId!);
     };
 
     getData();
@@ -118,6 +123,9 @@ export const DoctorPatientPage = () => {
       </DarkCardContainer>
       <ModalVideoCall leaveCall={leaveCall} />
 
+          <DarkCardContainer width="full">
+            <AnomalyProbabilityCard probability={anomalyProbability} />
+          </DarkCardContainer>
       <DarkCardContainer width="full">
         <header className="flex justify-between items-center">
           <SubTitle value="Historial Clinico" color="white" />

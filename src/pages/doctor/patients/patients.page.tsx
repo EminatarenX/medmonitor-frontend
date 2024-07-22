@@ -12,22 +12,22 @@ import { Pagination } from "@mui/material";
 import { usePatientState } from "../../../stores/patient.store";
 
 export const DoctorPatientsPage = () => {
-  const charRef = useRef<HTMLDivElement>(null)
-  const limit = 5
+  const charRef = useRef<HTMLDivElement>(null);
+  const limit = 5;
   const [page, setpage] = useState(1);
 
   const patients = usePatientState((state) => state.patients);
-  const getPatientsForDoctor = usePatientState((state) => state.getPatientsForDoctor);
+  const getPatientsForDoctor = usePatientState(
+    (state) => state.getPatientsForDoctor
+  );
   const totalPatients = usePatientState((state) => state.totalPatients);
   const totalPages = Math.ceil(totalPatients / limit);
 
-
-
-useEffect(() => {
+  useEffect(() => {
     const getData = async () => {
       await getPatientsForDoctor(limit, page);
-    }
-    getData()
+    };
+    getData();
   }, [page]);
 
   return (
@@ -41,18 +41,17 @@ useEffect(() => {
           <ArticleTitle color="white" value="Agrega un nuevo paciente" />
           <NewPatientForm />
         </DarkCardContainer>
-        <DarkCardContainer width="w-1/3 " >
-          <ArticleTitle color="white" value="Mayor frecuencia" />
-          <div ref={charRef}>
-          <DobleLineChart 
-            labels={["Enero", "Febrero", "Marzo", "Abril", "Mayo"]}
-            firstData={[10, 20, 12, 13, 19]}
-            secondData={[5, 10, 15, 20, 25]}
-            width={charRef.current?.clientWidth!}
-            height={300}
-            firstLabel="Pulsaciones"
-            secondLabel="Oxigeno"
-            />
+        <DarkCardContainer width="w-1/3">
+          <div ref={charRef} className="flex flex-col items-center h-full justify-center">
+            <img src="/9.svg" className="w-1/3" alt="" />
+         
+            
+                <ArticleTitle color="white" value={'"Al final todo estará bien"'} />
+                <p className="text-white font-semibold">
+                y si no está bien, no hemos llegado al final.
+                </p>
+              
+   
           </div>
         </DarkCardContainer>
       </FlexRowSection>
@@ -72,18 +71,17 @@ useEffect(() => {
           </div>
         </FlexRowSection>
         <FlexColList>
-         {
-          Object.values(patients).length === 0 ? (
+          {Object.values(patients).length === 0 ? (
             <section className="flex justify-center items-center h-96">
               <h1 className="text-2xl font-semibold text-neutral-500">
                 No hay pacientes registrados
               </h1>
             </section>
-          ) : Object.values(patients).map((patient) => (
-            <PatientInList key={patient.id} patient={patient} />
-          ))
-          
-         }
+          ) : (
+            Object.values(patients).map((patient) => (
+              <PatientInList key={patient.id} patient={patient} />
+            ))
+          )}
         </FlexColList>
       </DarkCardContainer>
       <div className="flex justify-center w-full">
@@ -93,14 +91,14 @@ useEffect(() => {
           shape="rounded"
           onChange={(_, value) => setpage(value)}
           sx={{
-            marginTop: '2rem',
-            '& .MuiPaginationItem-root': {
-              color: '#d1d5db',
-              '&:hover': {
-                backgroundColor: '#4b5563',
+            marginTop: "2rem",
+            "& .MuiPaginationItem-root": {
+              color: "#d1d5db",
+              "&:hover": {
+                backgroundColor: "#4b5563",
               },
-              '&.Mui-selected': {
-                backgroundColor: '#6b7280',
+              "&.Mui-selected": {
+                backgroundColor: "#6b7280",
               },
             },
           }}

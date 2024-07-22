@@ -7,6 +7,7 @@ import { NewPatientPage } from "../pages/admin/patients/newPatient.page";
 import { PatientProfilePage } from "../pages/admin/patients/[id]/profile.page";
 import { ProfileDoctorPage } from "../pages/admin/doctors/[id]/profile.page";
 import { AdminLayout } from "../shared/layouts";
+import { HospitalSettingsPage } from "../pages/admin/settings.page";
 
 
 
@@ -26,6 +27,10 @@ export const adminRouter = [
       {
         path: "patients",
         element: <PatientsPage />,
+      },
+      {
+        path: "settings",
+        element: <HospitalSettingsPage />,
       },
       {
         path: "monitor",

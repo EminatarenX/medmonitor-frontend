@@ -6,6 +6,8 @@ import { useAuthState } from "../../../stores/auth/auth.store";
 import { useMonitorState } from "../../../stores/monitor/monitor.store";
 import { useClinicalRegistryState } from "../../../stores/medical-registry/clinical-registr.store";
 import { ClinicalRegistryComponent } from "../../../components/shared/app/clinicalregistry";
+import { useStatisticsState } from "../../../stores/stadistics/stadistics.store";
+import AnomalyProbabilityCard from "../../../components/shared/app/anomally-cardpatient.component";
 
 export const PatientDashboardPage = () => {
   const patient = useAuthState((state) => state.patient);
@@ -14,6 +16,8 @@ export const PatientDashboardPage = () => {
   const currentMonitor = useMonitorState( state => state.currentMonitor)
   const clinicalRegistries = useClinicalRegistryState(state => state.registries)
   const getClinicalRegistries = useClinicalRegistryState( state => state.findAllPatientRegistries)
+  const anomalyProbability = useStatisticsState( state => state.anomalyProbabilityPatient)
+  const getAnomalyProbability = useStatisticsState( state => state.getAnomalyProbabilityPatient)
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -22,6 +26,7 @@ export const PatientDashboardPage = () => {
     }, 2000)
     const init = async () => {
       await getMonitor(patient?.id!);
+      await getAnomalyProbability(patient?.id!);
     }
 
     init();
@@ -49,6 +54,9 @@ export const PatientDashboardPage = () => {
           />
         )
       }
+      </DarkCardContainer>
+      <DarkCardContainer width="w-full">
+        <AnomalyProbabilityCard probability={anomalyProbability} />
       </DarkCardContainer>
 
       <DarkCardContainer width="w-full">

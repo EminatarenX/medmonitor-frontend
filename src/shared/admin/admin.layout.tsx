@@ -25,8 +25,8 @@ export const AdminLayout = () => {
    <main className="flex flex-col h-screen bg-neutral-950">
   <div className="flex flex-grow overflow-hidden">
     <AsideAdmin />
-    <div className="flex-1 overflow-y-auto scrollbar-hide bg-neutral-900 p-6">
-      <div className="max-w-7xl mx-auto pb-40">
+    <div className="flex-1 overflow-y-auto scrollbar-hide bg-neutral-950 p-6">
+      <div className="w-full  pb-40">
         <Outlet />
       </div>
     </div>
