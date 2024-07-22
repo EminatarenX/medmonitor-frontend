@@ -137,7 +137,7 @@ const VideoCallPage = () => {
               />
             )}
           </div>
-          <div className="bg-neutral-800 rounded-lg overflow-hidden max-h-[20px]">
+          <div className="bg-neutral-800 rounded-lg overflow-hidden ">
           {stream && (
               <video
                 playsInline
