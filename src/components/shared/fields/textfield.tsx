@@ -16,6 +16,19 @@ export const TextField = ({ type, placeholder, id, register, color, disable = fa
 
   switch (type) {
     case "date":
+      inputElement = (
+        <div>
+          <label className={`text-${color} text-xs`} htmlFor={id}>{placeholder}</label>
+          <input
+          style={{colorScheme: 'dark'}}
+            id={id}
+            type={type}
+            placeholder={placeholder}
+            className={`bg-transparent  text-${color} outline-none text-sm  w-full placeholder:text-neutral-400 text-semibold border-b-2 border-neutral-700 p-3`}
+            {...register}
+          />
+        </div>
+      );
       break;
     case "text":
       inputElement = (

@@ -49,7 +49,7 @@ const VideoCallPage = () => {
 
     socket.on("callUser", (data) => {
       setReceivingCall(true);
-      setCaller(data.from);
+      setCaller(data.senderId);
       setName(data.name);
       setCallerSignal(data.signal);
     });
@@ -73,6 +73,7 @@ const VideoCallPage = () => {
       userVideo.current!.srcObject = stream;
     });
     socket.on("callAccepted", (signal) => {
+      console.log('callAccepted', signal)
       setCallAccepted(true);
       peer.signal(signal);
     });
@@ -113,11 +114,12 @@ const VideoCallPage = () => {
     <div className="bg-neutral-900 min-h-screen text-neutral-100 p-4 relative">
       {receivingCall && !callAccepted && (
         <div className="fixed top-0 left-0 right-0 bg-sky-500 text-white py-4 px-6 flex justify-between items-center z-50">
-          <span className="text-lg font-semibold">{name} is calling...</span>
+          <span className="text-lg font-semibold">Someone is calling...</span>
           <Button
+          type="button"
             variant="contained"
             className="bg-white text-sky-500 hover:bg-neutral-100"
-            onClick={answerCall}
+            onClick={() => answerCall()}
           >
             Answer
           </Button>
