@@ -39,12 +39,20 @@ export const NewDoctorForm = () => {
 
   const handleSubmitDoctor = async (data: IFormNewDoctor) => {
     try {
-      await addDoctor(data)
-      Alerts.toastify("Doctor agregado correctamente", "success")
-      navigate('/admin/doctors')
+      await addDoctor(data);
+      Alerts.toastify("Doctor agregado correctamente", "success");
+      navigate("/admin/doctors");
     } catch (error: any) {
-      console.log(error)
-      Alerts.toastify(error.response.data.message, 'error')
+      if (Array.isArray(error.response.data.message)) {
+        error.response.data.message.map((e: string) => {
+          return Alerts.toastify(
+            e === "email must be an email" ? "correo electronico no valido" : e,
+            "error",
+          );
+        });
+      }
+      console.log(error);
+      Alerts.toastify(error.response.data.message, "error");
     }
   };
 
@@ -65,7 +73,12 @@ export const NewDoctorForm = () => {
             label="Nombres"
             variant="outlined"
             className="w-full"
-            sx={{input: {color: 'white'}, label: {color: 'white'}, colorScheme: 'dark', backgroundColor: '#404040' }}
+            sx={{
+              input: { color: "white" },
+              label: { color: "white" },
+              colorScheme: "dark",
+              backgroundColor: "#404040",
+            }}
           />
 
           <TextField
@@ -73,23 +86,37 @@ export const NewDoctorForm = () => {
             label="Apellidos"
             variant="outlined"
             className="w-full"
-            sx={{input: {color: 'white'}, label: {color: 'white'}, colorScheme: 'dark', backgroundColor: '#404040' }}
+            sx={{
+              input: { color: "white" },
+              label: { color: "white" },
+              colorScheme: "dark",
+              backgroundColor: "#404040",
+            }}
           />
 
           <TextField
             {...register("phone", { required: true })}
-            
             label="Teléfono"
             variant="outlined"
             className="w-full"
-            sx={{input: {color: 'white'}, label: {color: 'white'}, colorScheme: 'dark', backgroundColor: '#404040' }}
+            sx={{
+              input: { color: "white" },
+              label: { color: "white" },
+              colorScheme: "dark",
+              backgroundColor: "#404040",
+            }}
           />
           <TextField
             {...register("email", { required: true })}
             label="Correo"
             variant="outlined"
             className="w-full"
-            sx={{input: {color: 'white'}, label: {color: 'white'}, colorScheme: 'dark', backgroundColor: '#404040' }}
+            sx={{
+              input: { color: "white" },
+              label: { color: "white" },
+              colorScheme: "dark",
+              backgroundColor: "#404040",
+            }}
           />
 
           {/* Repeat this pattern for other fields */}
@@ -110,34 +137,41 @@ export const NewDoctorForm = () => {
             </select>
           </div>
 
-            <TextField
-              {...register("birthDate", { required: true })}
-              label="Fecha de nacimiento"
-              sx={{input: {color: 'white'}, label: {color: 'white'}, colorScheme: 'dark' }}
-              type="date"
-              variant="outlined"
-              className="w-full "
-              InputLabelProps={{shrink: true }}
-           
-            />
+          <TextField
+            {...register("birthDate", { required: true })}
+            label="Fecha de nacimiento"
+            sx={{
+              input: { color: "white" },
+              label: { color: "white" },
+              colorScheme: "dark",
+            }}
+            type="date"
+            variant="outlined"
+            className="w-full "
+            InputLabelProps={{ shrink: true }}
+          />
           <TextField
             {...register("joinDate", { required: true })}
             label="Fecha de ingreso"
-            sx={{input: {color: 'white'}, label: {color: 'white'}, colorScheme: 'dark' }}
+            sx={{
+              input: { color: "white" },
+              label: { color: "white" },
+              colorScheme: "dark",
+            }}
             type="date"
             variant="outlined"
             className="w-full"
-            InputLabelProps={{shrink: true }}
+            InputLabelProps={{ shrink: true }}
           />
 
           {/* ... */}
         </div>
 
-
-        
         <div className="flex flex-col gap-6">
-
-          <select className="p-3 bg-neutral-700 text-neutral-100 rounded outline-none" {...register("area", { required: true })}>
+          <select
+            className="p-3 bg-neutral-700 text-neutral-100 rounded outline-none"
+            {...register("area", { required: true })}
+          >
             <option value="">-- Selecciona un area --</option>
             {areas.map((area) => (
               <option key={area} value={area}>
@@ -145,7 +179,10 @@ export const NewDoctorForm = () => {
               </option>
             ))}
           </select>
-          <select className="p-3 bg-neutral-700 text-neutral-100 rounded outline-none" {...register("specialty", { required: true })}>
+          <select
+            className="p-3 bg-neutral-700 text-neutral-100 rounded outline-none"
+            {...register("specialty", { required: true })}
+          >
             <option value="">-- Selecciona una especialidad --</option>
             {especialidades.map((especialidad) => (
               <option key={especialidad} value={especialidad}>
@@ -169,20 +206,39 @@ export const NewDoctorForm = () => {
               Generar
             </button>
           </div>
-
+          {errors.education && (
+            <span className="bg-red-900 text-red-200 w-full text-center py-2 rounded">
+              Educacion requerida, minimo de 100 caracteres
+            </span>
+          )}
           <TextField
-            {...register("education", { required: false })}
+            {...register("education", { required: true, minLength: 100 })}
             label="Education"
             multiline
-            sx={{input: {color: 'white'}, label: {color: 'white'}, colorScheme: 'dark', backgroundColor: '#404040' }}
+            sx={{
+              input: { color: "white" },
+              label: { color: "white" },
+              colorScheme: "dark",
+              backgroundColor: "#404040",
+            }}
             rows={5}
-            className="w-full"
-            InputLabelProps={{ className: "text-neutral-400" }}
-            InputProps={{ className: "text-neutral-100 bg-neutral-700" }}
+            className="w-full text-white"
+           
+            
           />
+          {errors.experience && (
+            <span className="bg-red-900 text-red-200 w-full text-center py-2 rounded">
+              Experiencia requerida, minimo de 100 caracteres
+            </span>
+          )}
           <TextField
-          sx={{input: {color: 'white'}, label: {color: 'white'}, colorScheme: 'dark', backgroundColor: '#404040' }}
-            {...register("experience", { required: false })}
+            sx={{
+              input: { color: "white" },
+              label: { color: "white" },
+              colorScheme: "dark",
+              backgroundColor: "#404040",
+            }}
+            {...register("experience", { required: true, minLength: 100})}
             label="Experiencia"
             multiline
             rows={5}
@@ -194,7 +250,7 @@ export const NewDoctorForm = () => {
           {/* ... */}
         </div>
       </div>
-      
+
       <Button
         type="submit"
         variant="contained"
@@ -205,4 +261,3 @@ export const NewDoctorForm = () => {
     </form>
   );
 };
-

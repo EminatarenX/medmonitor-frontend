@@ -25,11 +25,10 @@ export const Signin = () => {
       Alerts.toastify('Usuario registrado', 'success')
       navigate('/login')
     } catch (error) {
-      const err = error as AxiosError<any>
-      const errors = err?.response?.data?.message
-      for( const e of errors) {
-        Alerts.toastify(e, 'error')
-      }
+      console.log(error)
+      // const err = error as AxiosError<any>
+      // const errors = err?.response?.data?.message
+      Alerts.toastify("Algo salio mal", "error")
     }
   };
   return (

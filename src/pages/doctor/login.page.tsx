@@ -25,6 +25,7 @@ export const DoctorLogin = () => {
       Alerts.toastify("Bienvenido de nuevo! 👋", "success");
       navigate('/doctor/dashboard')
     } catch (e) {
+      console.log(e)
       const error = e as AxiosError<any>;
       Alerts.toastify(
         error?.response?.data?.message || "Error desconocido",
